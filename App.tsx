@@ -17,8 +17,8 @@ const Stack = createNativeStackNavigator();
 function HomeStack() {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="Back" component={HomeScreen} options={{ headerShown: false}} />
-      <Stack.Screen name="FilmDetail" component={FilmDetailScreen} options={{ title: 'Film Details' }} />
+      <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
+      <Stack.Screen name="FilmDetail" component={FilmDetailScreen} options={{ title: 'Details' }} />
     </Stack.Navigator>
   );
 }
@@ -49,7 +49,7 @@ export default function App() {
           tabBarIcon: ({ focused, color, size }) => {
             let iconName;
 
-            if (route.name === 'Home') {
+            if (route.name === 'Film Store') {
               iconName = focused ? 'home' : 'home-outline';
             } else if (route.name === 'Search') {
               iconName = focused ? 'search' : 'search-outline';
@@ -61,7 +61,7 @@ export default function App() {
           },
         })}
       >
-        <Tab.Screen name="Home" component={HomeStack} />
+        <Tab.Screen name="Film Store" component={HomeStack} options={{ tabBarLabel: 'Home' }} />
         <Tab.Screen name="Search" component={SearchStack} />
         <Tab.Screen name="Login" component={LoginStack} />
         
@@ -69,3 +69,4 @@ export default function App() {
     </NavigationContainer>
   );
 }
+
