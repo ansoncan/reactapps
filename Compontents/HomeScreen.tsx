@@ -1,127 +1,115 @@
-// 
 import React, { useEffect, useState, useRef } from 'react';
-import { View, ActivityIndicator, FlatList } from 'react-native';
-import { useNavigation, useFocusEffect } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { Film, RootStackParamList } from './navigation';
+import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { HeaderBar } from './HeaderBar';
 import { SearchOverlay } from './SearchOverlay';
 import { FilterModal } from './FilterModal';
-import { FilmList } from './FilmList';
-import { HeaderBar } from './HeaderBar';
 import { ScrollIndex } from './ScrollIndex';
-import { extractValidYears, handleMonthSelection as handleMonthSelectHelper } from './filmHelpers';
+import { FilmList } from './FilmList';
 
-export default function HomeScreen() {
-  const [films, setFilms] = useState<Film[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [searchText, setSearchText] = useState('');
-  const [year, setYear] = useState<number | null>(null);
-  const [months, setMonths] = useState<number[]>([]);
+interface Film {
+  _id: string;
+  title: string;
+  year?: string;
+  released?: string;
+  poster?: string;
+}
+
+const HomeScreen = () => {
+  const navigation = useNavigation();
   const [isSearchOverlayVisible, setIsSearchOverlayVisible] = useState(false);
   const [isFilterModalVisible, setIsFilterModalVisible] = useState(false);
-  const [earliestYear, setEarliestYear] = useState(new Date().getFullYear());
-  const [latestYear, setLatestYear] = useState(new Date().getFullYear());
+  const [searchText, setSearchText] = useState('');
   const [scrollOffset, setScrollOffset] = useState(0);
   const [showDropdown, setShowDropdown] = useState(false);
-
-  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const flatListRef = useRef<FlatList>(null);
-  const dropdownTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const [films, setFilms] = useState<Film[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [months, setMonths] = useState<number[]>([]);
+  const [filteredFilms, setFilteredFilms] = useState<Film[]>([]);
+  const [selectedYears, setSelectedYears] = useState<number[]>([]);
+  const flatListRef = useRef<any>(null);
 
   useEffect(() => {
-    const fetchFilms = async () => {
-      try {
-        const response = await fetch('http://pcpdfilm.starsknights.com/api/v2/films');
-        const data: Film[] = await response.json();
-        setFilms(data);
-
-        const validYears = extractValidYears(data);
-        if (validYears.length > 0) {
-          const minYear = Math.min(...validYears);
-          const maxYear = Math.max(...validYears);
-          setEarliestYear(minYear);
-          setLatestYear(maxYear);
-          setYear(minYear);
-        } else {
-          console.warn('No valid years found in the data.');
-        }
-      } catch (error) {
-        console.error('Error fetching films:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchFilms();
   }, []);
 
-  useFocusEffect(
-    React.useCallback(() => {
-      setIsSearchOverlayVisible(false);
-      setIsFilterModalVisible(false);
-      setYear(null);
-      setMonths([]);
-      setShowDropdown(false); // Reset dropdown on screen focus
-
-      return () => {
-        if (dropdownTimerRef.current) {
-          clearTimeout(dropdownTimerRef.current);
-        }
-      };
-    }, [])
-  );
-
-  const toggleSearchOverlay = () => setIsSearchOverlayVisible(prev => !prev);
-  const toggleFilterModal = () => setIsFilterModalVisible(prev => !prev);
-
-  const toggleDropdown = () => {
-    setShowDropdown(prev => {
-      const newState = !prev;
-      if (newState) {
-        dropdownTimerRef.current = setTimeout(() => {
-          setShowDropdown(false);
-        }, 10000); // Auto-hide after 10 seconds
-      } else if (dropdownTimerRef.current) {
-        clearTimeout(dropdownTimerRef.current);
-      }
-      return newState;
-    });
+  const fetchFilms = async () => {
+    try {
+      const response = await fetch('http://pcpdfilm.starsknights.com/api/v2/films');
+      const data = await response.json();
+      setFilms(data);
+      setFilteredFilms(data);
+    } catch (error) {
+      console.error("Error fetching films:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const hideDropdown = () => {
-    setShowDropdown(false);
-    if (dropdownTimerRef.current) {
-      clearTimeout(dropdownTimerRef.current);
+  useEffect(() => {
+    if (!loading) {
+      applyFilters();
     }
+  }, [months, selectedYears, films, loading]);
+
+  const applyFilters = () => {
+  const monthMap: { [key: string]: number } = {
+    Jan: 1, Feb: 2, Mar: 3, Apr: 4, May: 5, Jun: 6,
+    Jul: 7, Aug: 8, Sep: 9, Oct: 10, Nov: 11, Dec: 12,
+  };
+
+  const filtered = films.filter(film => {
+    if (!film.released) return false;
+
+    const match = film.released.match(/^(\d{1,2})\s([A-Za-z]{3})\s(\d{4})$/);
+    if (!match) return false;
+
+    const [, , monthAbbr, yearStr] = match;
+    const monthIndex = monthMap[monthAbbr];
+    const year = parseInt(yearStr, 10);
+
+    if (!monthIndex) return false;
+
+    const monthMatch = months.length === 0 || months.includes(monthIndex);
+    const yearMatch = selectedYears.length === 0 || selectedYears.includes(year);
+
+    return monthMatch && yearMatch;
+  });
+
+  setFilteredFilms(filtered);
+};
+
+
+  const clearFilters = () => {
+    setMonths([]);
+    setSelectedYears([]);
+  };
+
+  const handleMonthSelectHelper = (month: number) => {
+    setMonths(prev => prev.includes(month) ? prev.filter(m => m !== month) : [...prev, month]);
+  };
+
+  const handleYearSelectHelper = (year: number) => {
+    setSelectedYears(prev => prev.includes(year) ? prev.filter(y => y !== year) : [...prev, year]);
+  };
+
+  const toggleSearchOverlay = () => setIsSearchOverlayVisible(!isSearchOverlayVisible);
+  const toggleFilterModal = () => setIsFilterModalVisible(!isFilterModalVisible);
+
+  const handleScroll = (event: any) => {
+    const { contentOffset } = event.nativeEvent;
+    setScrollOffset(contentOffset.y);
+    setShowDropdown(contentOffset.y > 100);
   };
 
   const scrollToTop = () => {
     flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
-    setShowDropdown(false);
   };
 
-  const handleMonthSelection = (month: number) => {
-    setMonths(prev => handleMonthSelectHelper(month, prev));
-  };
+  const hideDropdown = () => setShowDropdown(false);
+  const toggleDropdown = () => setShowDropdown(!showDropdown);
 
-  const applyFilters = () => {
-    console.log('Year:', year);
-    console.log('Selected Months:', months);
-    setIsFilterModalVisible(false);
-  };
-
-  const handleScroll = (event: any) => {
-    const offsetY = event.nativeEvent.contentOffset.y;
-    setScrollOffset(offsetY);
-    if (scrollOffset > 200 && offsetY <= 200) {
-      setShowDropdown(false);
-    }
-    if (showDropdown) setShowDropdown(false);
-  };
-
-  if (loading) {
-    return <ActivityIndicator style={{ marginTop: 50 }} size="large" />;
-  }
+  const isFiltered = months.length > 0 || selectedYears.length > 0;
 
   return (
     <View style={{ flex: 1, position: 'relative', paddingTop: 50 }}>
@@ -129,27 +117,26 @@ export default function HomeScreen() {
         onUserPress={() => navigation.navigate('Login')}
         onFilterPress={toggleFilterModal}
         onSearchPress={toggleSearchOverlay}
+        isFiltered={isFiltered}
+        onClearFilters={isFiltered ? clearFilters : undefined}
       />
-
       <SearchOverlay
         isVisible={isSearchOverlayVisible}
         onClose={toggleSearchOverlay}
         searchText={searchText}
         onSearchTextChange={setSearchText}
       />
-
       <FilterModal
         isVisible={isFilterModalVisible}
         onClose={toggleFilterModal}
-        year={year}
-        setYear={setYear}
         months={months}
-        handleMonthSelection={handleMonthSelection}
+        handleMonthSelection={handleMonthSelectHelper}
         applyFilters={applyFilters}
-        earliestYear={earliestYear}
-        latestYear={latestYear}
+        clearFilters={clearFilters}
+        filteredFilms={filteredFilms}
+        selectedYears={selectedYears}
+        handleYearSelection={handleYearSelectHelper}
       />
-
       <ScrollIndex
         scrollOffset={scrollOffset}
         showDropdown={showDropdown}
@@ -157,8 +144,19 @@ export default function HomeScreen() {
         scrollToTop={scrollToTop}
         hideDropdown={hideDropdown}
       />
-
-      <FilmList films={films} onScroll={handleScroll} ref={flatListRef} />
+      {filteredFilms.length > 0 ? (
+        <FilmList
+          ref={flatListRef}
+          films={filteredFilms}
+          onScroll={handleScroll}
+        />
+      ) : (
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <Text>No films found matching your criteria.</Text>
+        </View>
+      )}
     </View>
   );
-}
+};
+
+export default HomeScreen;

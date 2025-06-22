@@ -4,85 +4,160 @@ import {
   TouchableWithoutFeedback,
   View,
   Text,
-  Button,
   StyleSheet,
-  TouchableOpacity
+  TouchableOpacity,
 } from 'react-native';
-import Slider from '@react-native-community/slider';
+
+interface Film {
+  _id: string;
+  title: string;
+  year?: string;
+  released?: string;
+  poster?: string;
+}
 
 interface FilterModalProps {
   isVisible: boolean;
   onClose: () => void;
-  year: number | null;
-  setYear: (year: number) => void;
   months: number[];
   handleMonthSelection: (month: number) => void;
   applyFilters: () => void;
-  earliestYear: number;
-  latestYear: number;
+  clearFilters: () => void;
+  filteredFilms: Film[];
+  selectedYears: number[];
+  handleYearSelection: (year: number) => void;
 }
 
-export const FilterModal = ({ isVisible, onClose, year, setYear, months, handleMonthSelection, applyFilters, earliestYear, latestYear }: FilterModalProps) => {
-  if (!isVisible) return null;
+export const FilterModal = ({
+  isVisible,
+  onClose,
+  months,
+  handleMonthSelection,
+  applyFilters,
+  clearFilters,
+  filteredFilms,
+  selectedYears,
+  handleYearSelection,
+}: FilterModalProps) => {
+  
+  
+
+const monthMap: { [key: string]: number } = {
+  Jan: 1, Feb: 2, Mar: 3, Apr: 4, May: 5, Jun: 6,
+  Jul: 7, Aug: 8, Sep: 9, Oct: 10, Nov: 11, Dec: 12,
+};
+
+const filmsMatchingMonths = filteredFilms.filter(f => {
+  if (!f.released) return false;
+  const match = f.released.match(/^(\d{1,2})\s([A-Za-z]{3})\s(\d{4})$/);
+  if (!match) return false;
+  const [, , monthAbbr] = match;
+  const monthIndex = monthMap[monthAbbr];
+  return months.length === 0 || months.includes(monthIndex);
+});
+
+const distinctYears = Array.from(new Set(
+  filmsMatchingMonths
+    .map(f => {
+      const match = f.released?.match(/^(\d{1,2})\s([A-Za-z]{3})\s(\d{4})$/);
+      return match ? parseInt(match[3], 10) : null;
+    })
+    .filter((y): y is number => y !== null)
+));
+
+
+
+
+
+
 
   const monthNames = [
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December'
+    'January', 'February', 'March', 'April',
+    'May', 'June', 'July', 'August',
+    'September', 'October', 'November', 'December',
   ];
 
+
+
+  if (!isVisible) return null;
+
   return (
-    <Modal
-      visible={isVisible}
-      transparent={true}
-      animationType="slide"
-    >
+    <Modal visible={isVisible} transparent={true} animationType="slide">
       <TouchableWithoutFeedback onPress={onClose}>
         <View style={styles.modalBackground}>
           <View style={styles.modalContent}>
-            {/* Year Slider */}
-            {earliestYear !== undefined && latestYear !== undefined && (
-              <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Year</Text>
-                <Slider
-                  value={year === null ? earliestYear : year}
-                  minimumValue={earliestYear}
-                  maximumValue={latestYear}
-                  step={1}
-                  onValueChange={(value) => setYear(Math.round(value))}
-                  thumbTintColor="#4DA8DA"
-                  minimumTrackTintColor="#4DA8DA" // Set the color for the track
-                  maximumTrackTintColor="#ccc" 
-                  trackStyle={{ height: 2, width: 280 }} // Set specific width
-                  thumbStyle={{ height: 24, width: 24 }}
-                />
-                <Text style={styles.sliderValue}>{year === null ? earliestYear : year}</Text>
-              </View>
-            )}
-            <View style={styles.separator} />
- 
-            {/* Month Buttons */}
+            {/* Month Selection */}
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>Month</Text>
-              <View style={styles.monthButtonsContainer}>
-                {monthNames.map((name, index) => (
-                  <TouchableOpacity
-                    key={`month-${index}`}
-                    style={[
-                      styles.monthButton,
-                      months.includes(index + 1) && styles.selectedMonthButton,
-                    ]}
-                    onPress={() => handleMonthSelection(index + 1)}
-                  >
-                    <Text style={styles.monthButtonText}>
-                      {name}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
+              <View style={styles.buttonContainer}>
+                {monthNames.map((name, index) => {
+                  const isSelected = months.includes(index + 1);
+                  return (
+                    <TouchableOpacity
+                      key={`month-${index}`}
+                      style={[
+                        styles.button,
+                        isSelected && styles.selectedButton,
+                      ]}
+                      onPress={() => handleMonthSelection(index + 1)}
+                    >
+                      <Text
+                        style={[
+                          styles.buttonText,
+                          isSelected && styles.selectedButtonText,
+                        ]}
+                      >
+                        {name}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
               </View>
             </View>
 
-            {/* Apply Filters Button */}
-            <Button title="Apply Filters" color="#80D8C3" onPress={applyFilters} />
+            {/* Year Selection */}
+            {months.length > 0 && (
+              <View style={styles.section}>
+                <Text style={styles.sectionTitle}>Year</Text>
+                <View style={styles.buttonContainer}>
+                  {distinctYears.map((year) => {
+                    const isSelected = selectedYears.includes(year);
+                    return (
+                      <TouchableOpacity
+                        key={`year-${year}`}
+                        style={[
+                          styles.button,
+                          isSelected && styles.selectedButton,
+                        ]}
+                        onPress={() => handleYearSelection(year)}
+                      >
+                        <Text
+                          style={[
+                            styles.buttonText,
+                            isSelected && styles.selectedButtonText,
+                          ]}
+                        >
+                          {year}
+                        </Text>
+                      </TouchableOpacity>
+                    );
+                  })}
+                </View>
+                <Text style={styles.filmCount}>
+                  {filteredFilms.length} films found
+                </Text>
+              </View>
+            )}
+
+            {/* Action Buttons */}
+            <View style={styles.buttonRow}>
+              <TouchableOpacity style={styles.actionButton} onPress={onClose}>
+                <Text style={styles.actionButtonText}>View Result</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.actionButton} onPress={clearFilters}>
+                <Text style={styles.actionButtonText}>Clear Filters</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </TouchableWithoutFeedback>
@@ -93,54 +168,71 @@ export const FilterModal = ({ isVisible, onClose, year, setYear, months, handleM
 const styles = StyleSheet.create({
   modalBackground: {
     flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.5)',
   },
   modalContent: {
-    width: '90%',
-    maxWidth: 400,
+    width: '85%',
     backgroundColor: '#fff',
     padding: 20,
-    borderRadius: 8,
-    elevation: 4,
-    alignItems: 'center', // Center the content inside the modal
+    borderRadius: 10,
   },
   section: {
     marginBottom: 20,
-    width: '100%', // Ensure the section takes full width
   },
   sectionTitle: {
     fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 10,
-    textAlign: 'center', // Center the title text
   },
-  sliderValue: {
-    textAlign: 'center',
-    marginTop: 5,
-    fontSize: 18,
-    color: '#5b5b5b',
-  },
-  monthButtonsContainer: {
+  buttonContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-around', // Distribute space around items
-    width: '100%', // Ensure the container takes full width
+   justifyContent: 'space-between',
   },
-  monthButton: {
-    backgroundColor: '#FFD66B',
-    borderRadius: 25,
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-    elevation: 2,
-    margin: 5, // Add some margin to space out buttons
-    minWidth: 90, // Ensure each button has a minimum width for proper spacing
+  button: {
+    width: '30%',
+    padding: 10,
+    marginVertical: 5,
+    borderRadius: 5,
+    backgroundColor: '#f9f9f9',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    alignItems: 'center',
   },
-  selectedMonthButton: {
+  selectedButton: {
     backgroundColor: '#4DA8DA',
+    borderColor: '#4DA8DA',
   },
-  monthButtonText: {
-    color: '#F5F5F5',
+  buttonText: {
+    color: '#333',
+    fontSize: 12,
+    textAlign: 'center',
+  },
+  selectedButtonText: {
+    color: '#fff',
+  },
+  filmCount: {
+    textAlign: 'center',
+    marginTop: 10,
+    fontSize: 14,
+    color: '#555',
+  },
+  buttonRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  actionButton: {
+    flex: 1,
+    padding: 10,
+    marginHorizontal: 5,
+    borderRadius: 5,
+    backgroundColor: '#4DA8DA',
+    alignItems: 'center',
+  },
+  actionButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
   },
 });
