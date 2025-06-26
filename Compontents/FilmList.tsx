@@ -54,3 +54,5 @@ const styles = StyleSheet.create({
   title: { marginTop: 10, fontSize: 16, fontWeight: 'bold', textAlign: 'center', paddingHorizontal: 10 },
   separator: { marginTop: 10, width: '80%', height: 1, backgroundColor: '#ccc', alignSelf: 'center' },
 });
+
+
