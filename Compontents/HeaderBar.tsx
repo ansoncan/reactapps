@@ -1,10 +1,12 @@
-// 
+
+
 // import React from 'react';
 // import {
 //   View,
 //   TextInput,
 //   TouchableOpacity,
 //   StyleSheet,
+//   Keyboard,
 // } from 'react-native';
 // import Icon from 'react-native-vector-icons/Octicons';
 // import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -19,6 +21,7 @@
 //   onFilterPress: () => void;
 //   isFiltered: boolean;
 //   onClearFilters?: () => void;
+//   onSearchSubmit: () => void;
 // }
 
 // export const HeaderBar = ({
@@ -31,6 +34,7 @@
 //   onFilterPress,
 //   isFiltered,
 //   onClearFilters,
+//   onSearchSubmit,
 // }: HeaderBarProps) => {
 //   return (
 //     <View style={styles.header}>
@@ -41,8 +45,16 @@
 //             placeholder="Search films..."
 //             value={searchText}
 //             onChangeText={onSearchTextChange}
+//             onSubmitEditing={() => {
+//               Keyboard.dismiss();
+//               onSearchSubmit();
+//             }}
+//             returnKeyType="search"
 //             autoFocus
 //           />
+//           <TouchableOpacity onPress={onSearchSubmit}>
+//             <Icon name="search" size={24} color="#4DA8DA" />
+//           </TouchableOpacity>
 //           <TouchableOpacity onPress={onCancelSearch}>
 //             <Icon name="x" size={24} color="#bcbcbc" />
 //           </TouchableOpacity>
@@ -98,8 +110,6 @@
 //     marginRight: 10,
 //   },
 // });
-
-
 import React from 'react';
 import {
   View,
@@ -144,17 +154,18 @@ export const HeaderBar = ({
             style={styles.searchInput}
             placeholder="Search films..."
             value={searchText}
-            onChangeText={onSearchTextChange}
-            onSubmitEditing={() => {
-              Keyboard.dismiss();
-              onSearchSubmit();
+            onChangeText={(text) => {
+              onSearchTextChange(text);
+              if (text.trim() === '') setIsSearchActive(false); // Hide search icon when text is empty
             }}
             returnKeyType="search"
             autoFocus
           />
-          <TouchableOpacity onPress={onSearchSubmit}>
-            <Icon name="search" size={24} color="#4DA8DA" />
-          </TouchableOpacity>
+          {searchText ? (
+            <TouchableOpacity onPress={onSearchSubmit}>
+              <Icon name="search" size={24} color="#4DA8DA" style={styles.searchIcon} />
+            </TouchableOpacity>
+          ) : null}
           <TouchableOpacity onPress={onCancelSearch}>
             <Icon name="x" size={24} color="#bcbcbc" />
           </TouchableOpacity>
@@ -208,5 +219,11 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 10,
     marginRight: 10,
+    paddingRight: 35, // Adjust padding to make space for the search icon
+  },
+  searchIcon: {
+    position: 'absolute',
+    right: 30, // Adjust this value as needed
+    top: -12,   // Adjust this value as needed
   },
 });
