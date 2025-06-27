@@ -1,4 +1,3 @@
-// Compontents/HomeScreen.tsx (1-238)
 
 import React, { useEffect, useState, useRef } from 'react';
 import {
@@ -25,7 +24,7 @@ const HomeScreen = () => {
   const navigation = useNavigation();
   const [films, setFilms] = useState<Film[]>([]);
   const [filteredFilms, setFilteredFilms] = useState<Film[]>([]);
-  const [loading, setLoading] = useState(true); // Keep this state for loading
+  const [loading, setLoading] = useState(true);
   const [months, setMonths] = useState<number[]>([]);
   const [selectedYears, setSelectedYears] = useState<number[]>([]);
   const [scrollOffset, setScrollOffset] = useState(0);
@@ -45,7 +44,7 @@ const HomeScreen = () => {
 
   const fetchFilms = async () => {
     try {
-      setLoading(true); // Set loading to true while fetching
+      setLoading(true);
       const response = await fetch('http://pcpdfilm.starsknights.com/api/v2/films');
       const data = await response.json();
       setFilms(data);
@@ -53,7 +52,7 @@ const HomeScreen = () => {
     } catch (error) {
       console.error("Error fetching films:", error);
     } finally {
-      setLoading(false); // Set loading to false after fetching
+      setLoading(false);
     }
   };
 
@@ -85,17 +84,11 @@ const HomeScreen = () => {
 
   const handleSearchTextChange = (text: string) => {
     setSearchText(text);
-    if (text.trim() === '') {
-      setSearchResults([]);
-      return;
-    }
-    triggerSearch(text);
   };
 
   const handleSearchSubmit = () => {
-    if (searchText.trim() !== '') {
-      triggerSearch(searchText);
-    }
+    if (searchText.trim() === '') return;
+    triggerSearch(searchText);
   };
 
   const triggerSearch = async (text: string) => {
@@ -107,10 +100,12 @@ const HomeScreen = () => {
       ]);
       const data1 = await res1.json();
       const data2 = await res2.json();
+
       const filtered = data1.filter((film: Film) =>
         film.title.toLowerCase().includes(text.toLowerCase())
       );
-      const combined = [...filtered, ...(Array.isArray(data2) ? data2 : [data2])];
+
+      const combined = [...filtered, ...(Array.isArray(data2) ? data2 : data2 ? [data2] : [])];
       setSearchResults(combined);
     } catch (error) {
       console.error("Search error:", error);
@@ -133,7 +128,6 @@ const HomeScreen = () => {
   const handleScroll = (event: any) => {
     const { contentOffset } = event.nativeEvent;
     setScrollOffset(contentOffset.y);
-    //setShowDropdown(contentOffset.y > 100);
     setShowDropdown(false);
   };
 
@@ -145,7 +139,7 @@ const HomeScreen = () => {
         isSearchActive={isSearchActive}
         searchText={searchText}
         onSearchTextChange={handleSearchTextChange}
-        onSearchPress={() => setIsSearchActive(!isSearchActive)}
+        onSearchPress={() => setIsSearchActive(true)}
         onCancelSearch={toggleSearch}
         onUserPress={() => navigation.navigate('Login')}
         onFilterPress={() => setIsFilterModalVisible(true)}
@@ -193,7 +187,9 @@ const HomeScreen = () => {
           <ActivityIndicator size="large" color="#4DA8DA" />
         </View>
       ) : isSearchActive ? (
-        searchText.trim() === '' ? null : searchLoading ? (
+        searchText.trim() === '' ? (
+          <View />
+        ) : searchLoading ? (
           <View style={styles.centered}>
             <ActivityIndicator size="large" color="#4DA8DA" />
             <Text style={styles.loadingText}>Searching films...</Text>
@@ -203,7 +199,7 @@ const HomeScreen = () => {
         ) : (
           <View style={styles.centered}>
             <Text style={styles.noResultsText}>
-              We couldn’t find any films matching your search. Try a different title!
+              No films found matching your criteria.
             </Text>
           </View>
         )
