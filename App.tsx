@@ -1,33 +1,33 @@
+// App.tsx
+
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import HomeScreen from './Compontents/HomeScreen';
-import FilmDetailScreen from './Compontents/FilmDetail';
+import HomeScreen from './Components/HomeScreen'; // Ensure this path is correct
+import FilmDetailScreen from './Components/FilmDetail'; // Ensure this path is correct
+import LoginScreen from './Components/LoginScreen'; // Ensure this path is correct
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
-const Stack = createNativeStackNavigator();
+// Define the param list for the stack navigator
+export type RootStackParamList = {
+  HomeScreen: undefined;
+  FilmDetail: undefined;
+  LoginScreen: undefined; // Ensure this matches the name used in LoginScreen.tsx
+};
+
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function App() {
   return (
-    <NavigationContainer>
-      {/* <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="HomeScreen" component={HomeScreen} />
-        <Stack.Screen name="FilmDetail" component={FilmDetailScreen} />
-      </Stack.Navigator> */}
-
-      <Stack.Navigator>
-  <Stack.Screen
-    name="HomeScreen"
-    component={HomeScreen}
-    options={{ headerShown: false }}
-  />
-  <Stack.Screen
-    name="FilmDetail"
-    component={FilmDetailScreen}
-    options={{ headerShown: true }}
-  />
-</Stack.Navigator>
-
-    </NavigationContainer>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen name="HomeScreen" component={HomeScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="FilmDetail" component={FilmDetailScreen} options={{ headerShown: true }} />
+          <Stack.Screen name="LoginScreen" component={LoginScreen} options={{ headerShown: true }} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </GestureHandlerRootView>
   );
 }
 

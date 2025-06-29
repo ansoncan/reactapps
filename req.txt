@@ -1,0 +1,48 @@
+1.    The landing page (Main Page) 
+
+a.     Login feature.                                                                                                            
+
+b.    List film (Basic information only).                                                                           
+
+c.     App header and footer designed by you (any information provided by the tutor will not be marked).  
+
+d.    Each film is available with a link to a detail page (Film detail).                          
+
+e.     All detailed information available from the API must be displayed here (deduct 50% if the ObjectID is displayed on the screen).                                                                                                                       
+
+f.      If the film poster is not available in the database (or failed to retrieve from the Internet), replace by a default image.
+
+2.    Add Film Page 
+
+a.     Only staff can access this page; a routing link should be available after login.        
+
+b.    A textbox is available for staff to input the film name. The film's detailed information will be loaded once the search button is clicked through the designated API endpoint.                                                 
+
+c.     The film information should be available for staff editing (Film name and poster cannot be changed). 
+
+d.    A cancel button is available to return to the film list page, and a save button submits all data to the designated API endpoint to save the film information to the database.                                                      
+
+3.    Other Features
+
+a.     The API will return a token each time for each login. You should store the token and send the token for each authorization feature.                                                                                                                       
+
+b.    A good design with a well-structured CSS or styled-components design.               
+
+c.     Well-structured React Native project structure (views, components, navigation…).
+
+d.    A video demonstration is required, which should not exceed 3 minutes.                 
+
+4.    Bonus Features (Total: 30 Marks)
+
+a.     Logout feature (update database is NOT required).                                           
+
+b.    No hard-coded data.                                                                                               
+
+c.     Paging list view for the film list.                                                                             
+
+d.    Filtering the list based on months.                                                                        
+
+e.     Staff account password change page.                                                                   
+
+f. The current date/time information is displayed somewhere on the landing page.  
+

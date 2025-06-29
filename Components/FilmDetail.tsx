@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
   container: {
     padding: 20,
     alignItems: 'center',
-    paddingTop: 50,
+    paddingTop: 50, // iPhone-specific adjustment
   },
   image: {
     width: 250,
@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   title: {
-    fontSize: 22,
+    fontSize: 24, // Adjusting for iPhone demo
     fontWeight: 'bold',
     marginBottom: 10,
     textAlign: 'center',
@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-start',
     width: '80%',
-    marginBottom: 5,
+    marginBottom: 5, // Adjusting for iPhone demo
   },
   detailKey: {
     fontSize: 16,
@@ -96,6 +96,6 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   headerIcon: {
-    marginLeft: 15,
+    marginLeft: 15, // Adjusting for iPhone demo
   },
 });

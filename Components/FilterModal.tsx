@@ -39,45 +39,34 @@ export const FilterModal = ({
   selectedYears,
   handleYearSelection,
 }: FilterModalProps) => {
-  
-  
+  const monthMap: { [key: string]: number } = {
+    Jan: 1, Feb: 2, Mar: 3, Apr: 4, May: 5, Jun: 6,
+    Jul: 7, Aug: 8, Sep: 9, Oct: 10, Nov: 11, Dec: 12,
+  };
 
-const monthMap: { [key: string]: number } = {
-  Jan: 1, Feb: 2, Mar: 3, Apr: 4, May: 5, Jun: 6,
-  Jul: 7, Aug: 8, Sep: 9, Oct: 10, Nov: 11, Dec: 12,
-};
+  const filmsMatchingMonths = filteredFilms.filter(f => {
+    if (!f.released) return false;
+    const match = f.released.match(/^(\d{1,2})\s([A-Za-z]{3})\s(\d{4})$/);
+    if (!match) return false;
+    const [, , monthAbbr] = match;
+    const monthIndex = monthMap[monthAbbr];
+    return months.length === 0 || months.includes(monthIndex);
+  });
 
-const filmsMatchingMonths = filteredFilms.filter(f => {
-  if (!f.released) return false;
-  const match = f.released.match(/^(\d{1,2})\s([A-Za-z]{3})\s(\d{4})$/);
-  if (!match) return false;
-  const [, , monthAbbr] = match;
-  const monthIndex = monthMap[monthAbbr];
-  return months.length === 0 || months.includes(monthIndex);
-});
-
-const distinctYears = Array.from(new Set(
-  filmsMatchingMonths
-    .map(f => {
-      const match = f.released?.match(/^(\d{1,2})\s([A-Za-z]{3})\s(\d{4})$/);
-      return match ? parseInt(match[3], 10) : null;
-    })
-    .filter((y): y is number => y !== null)
-));
-
-
-
-
-
-
+  const distinctYears = Array.from(new Set(
+    filmsMatchingMonths
+      .map(f => {
+        const match = f.released?.match(/^(\d{1,2})\s([A-Za-z]{3})\s(\d{4})$/);
+        return match ? parseInt(match[3], 10) : null;
+      })
+      .filter((y): y is number => y !== null)
+  ));
 
   const monthNames = [
     'January', 'February', 'March', 'April',
     'May', 'June', 'July', 'August',
     'September', 'October', 'November', 'December',
   ];
-
-
 
   if (!isVisible) return null;
 
@@ -182,18 +171,18 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   sectionTitle: {
-    fontSize: 16,
+    fontSize: 16, // Adjusting for iPhone demo
     fontWeight: 'bold',
     marginBottom: 10,
   },
   buttonContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-   justifyContent: 'space-between',
+    justifyContent: 'space-between',
   },
   button: {
     width: '30%',
-    padding: 10,
+    padding: 12, // Adjusting for iPhone demo
     marginVertical: 5,
     borderRadius: 5,
     backgroundColor: '#f9f9f9',
@@ -207,7 +196,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: '#333',
-    fontSize: 12,
+    fontSize: 12, // Adjusting for iPhone demo
     textAlign: 'center',
   },
   selectedButtonText: {
@@ -216,7 +205,7 @@ const styles = StyleSheet.create({
   filmCount: {
     textAlign: 'center',
     marginTop: 10,
-    fontSize: 14,
+    fontSize: 14, // Adjusting for iPhone demo
     color: '#555',
   },
   buttonRow: {
@@ -225,7 +214,7 @@ const styles = StyleSheet.create({
   },
   actionButton: {
     flex: 1,
-    padding: 10,
+    paddingVertical: 12, // Adjusting for iPhone demo
     marginHorizontal: 5,
     borderRadius: 5,
     backgroundColor: '#4DA8DA',
