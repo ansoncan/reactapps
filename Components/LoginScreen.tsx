@@ -7,6 +7,7 @@ import {
   Image,
   StyleSheet
 } from 'react-native';
+import { Buffer } from 'buffer';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -27,7 +28,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
   const [errorMessage, setErrorMessage] = useState('');
 
   // Set base URL for API requests
-  const BASE_URL = 'https://pcpdfilm.starsknights.com:18888/api/v2'; // Change to 'https://' if supported
+  const BASE_URL = 'http://pcpdfilm.starsknights.com/api/v2'; // Change to 'https://' if supported
 
   // Set navigation header options
   useEffect(() => {
@@ -47,38 +48,35 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
 
       // Create credentials and encode them for Basic Authentication
       const credentials = `${username}:${password}`;
-      const encodedCredentials = btoa(credentials);
+      const encodedCredentials = Buffer.from(credentials).toString('base64');
       console.log('Encoded Credentials:', encodedCredentials);
 
-      // Login request with Basic Authorization header using fetch
-      const response = await fetch(`${BASE_URL}/user`, {
+      const url = `${BASE_URL}/user`;
+      console.log('Fetching from:', url);
+
+      const response = await fetch(url, {
         method: 'GET',
         headers: {
           Authorization: `Basic ${encodedCredentials}`,
         },
       });
 
-      console.log('Login Response Status:', response.status);
-      console.log('Login Response Headers:', response.headers);
-
       if (response.ok) {
-        const data = await response.json();
-        console.log('Login Response Data:', data);
+        const json = await response.json();
+        console.log('Login Response Data:', json);
 
         // Save token to AsyncStorage
-        const k = data.k;
-        await AsyncStorage.setItem('token', k);
+        if (json.key) {
+          await AsyncStorage.setItem('token', json.key);
+        }
 
         // Get user details request with key (k) in headers using fetch
         const userDetailsResponse = await fetch(`${BASE_URL}/user/detail`, {
           method: 'GET',
           headers: {
-            'k': k,
+            'k': json.key,
           },
         });
-
-        console.log('User  Details Response Status:', userDetailsResponse.status);
-        console.log('User  Details Response Headers:', userDetailsResponse.headers);
 
         if (userDetailsResponse.ok) {
           const userData = await userDetailsResponse.json();
@@ -99,9 +97,14 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
         console.error('Login Error:', response.status, loginError);
         setErrorMessage('Invalid credentials or login failed. Please try again.');
       }
-    } catch (error) {
-      console.error('Error during login:', error);
-      setErrorMessage('Network error. Please check your connection and try again.');
+    } catch (error: any) {
+      if (error instanceof TypeError && error.message === 'Network request failed') {
+        console.error('Network Request Failed', { message: error.message });
+        setErrorMessage('Network request failed. Please check your internet or API server.');
+      } else {
+        console.error('Error during login:', error);
+        setErrorMessage(`Unexpected error: ${JSON.stringify(error, null, 2)}`);
+      }
     }
   };
 
@@ -150,10 +153,6 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
       >
         <Text style={styles.buttonText}>Go to API Test</Text>
       </TouchableOpacity>
-
-
-
-
     </View>
   );
 };
