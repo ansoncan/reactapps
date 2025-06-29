@@ -16,6 +16,7 @@ export default function FilmDetailScreen({ route }: any) {
         </TouchableOpacity>
       ),
       headerTitle: film.title,
+      
       headerStyle: {
         backgroundColor: '#fff',
       },

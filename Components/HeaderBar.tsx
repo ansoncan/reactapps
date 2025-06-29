@@ -8,7 +8,6 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Octicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { GestureDetector, Gesture } from 'react-native-gesture-handler';
 
 interface HeaderBarProps {
   isSearchActive: boolean;
@@ -37,37 +36,57 @@ export const HeaderBar = ({
   onSearchSubmit,
   onClearSearch,
 }: HeaderBarProps) => {
-  const fadeAnim = useState(new Animated.Value(0))[0];
-  const rotateYAnim = useState(new Animated.Value(0))[0];
+  const [fadeAnim] = useState(new Animated.Value(0));
+  const [rotateYAnim] = useState(new Animated.Value(0));
 
+  // Re-run animation when the component mounts or when it is not in search mode
   useEffect(() => {
-    Animated.timing(fadeAnim, {
-      toValue: 1,
-      duration: 1000,
-      useNativeDriver: true,
-    }).start();
+    if (!isSearchActive) {
+      startAnimation();
+    }
+  }, []);
 
-    Animated.timing(rotateYAnim, {
-      toValue: 360,
-      duration: 1000,
-      useNativeDriver: true,
-    }).start();
-  }, [fadeAnim, rotateYAnim]);
+  // Restart animation whenever `isSearchActive` changes to false
+  useEffect(() => {
+    if (!isSearchActive) {
+      startAnimation();
+    } else {
+      Animated.timing(fadeAnim, {
+        toValue: 0,
+        duration: 500,
+        useNativeDriver: true,
+      }).start();
+
+      Animated.timing(rotateYAnim, {
+        toValue: 0,
+        duration: 500,
+        useNativeDriver: true,
+      }).start();
+    }
+  }, [isSearchActive]);
+
+  const startAnimation = () => {
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 500,
+        useNativeDriver: true,
+      }),
+      Animated.timing(rotateYAnim, {
+        toValue: 360,
+        duration: 500,
+        useNativeDriver: true,
+      })
+    ]).start();
+  }
 
   const rotateYInterpolate = rotateYAnim.interpolate({
     inputRange: [0, 360],
     outputRange: ['0deg', '360deg'],
   });
 
-  const panGesture = Gesture.Pan()
-    .onEnd(({ translationX }) => {
-      if (translationX < -50) {
-        onCancelSearch();
-      }
-    });
-
   return (
-    <View style={styles.header}>
+    <View style={[styles.header]}>
       {!isSearchActive && (
         <>
           <Animated.Text
@@ -82,66 +101,65 @@ export const HeaderBar = ({
             Film Store
           </Animated.Text>
 
-          <TouchableOpacity onPress={() => navigation.navigate('LoginScreen')} style={styles.headerIcon}>
-            <Icon name="person" size={24} color="#bcbcbc" />
-          </TouchableOpacity>
-
-          {isFiltered && onClearFilters && (
-            <TouchableOpacity onPress={onClearFilters} style={styles.headerIcon}>
-              <MaterialIcons name="filter-list-off" size={24} color="#4DA8DA" />
-            </TouchableOpacity>
-          )}
-
-          <TouchableOpacity onPress={onFilterPress} style={styles.headerIcon}>
-            <Icon name="filter" size={24} color={isFiltered ? '#4DA8DA' : '#bcbcbc'} />
-          </TouchableOpacity>
-
-          {!isFiltered && (
-            <Animated.View style={{ opacity: fadeAnim }}>
-              <TouchableOpacity onPress={onSearchPress} style={styles.headerIcon}>
-                <Icon name="search" size={24} color="#bcbcbc" />
+          {/* Icons container */}
+          <View style={styles.iconsContainer}>
+            {isFiltered && onClearFilters && (
+              <TouchableOpacity onPress={onClearFilters} style={styles.headerIcon}>
+                <MaterialIcons name="filter-list-off" size={24} color="#4DA8DA" />
               </TouchableOpacity>
-            </Animated.View>
-          )}
+            )}
+
+            <TouchableOpacity onPress={() => navigation.navigate('LoginScreen')} style={styles.headerIcon}>
+              <Icon name="person" size={24} color="#bcbcbc" />
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={onFilterPress} style={styles.headerIcon}>
+              <Icon name="filter" size={24} color={isFiltered ? '#4DA8DA' : '#bcbcbc'} />
+            </TouchableOpacity>
+
+            {!isFiltered && (
+              <Animated.View style={{ opacity: fadeAnim }}>
+                <TouchableOpacity onPress={onSearchPress} style={[styles.headerIcon, styles.searchIcon]}>
+                  <Icon name="search" size={24} color="#bcbcbc" />
+                </TouchableOpacity>
+              </Animated.View>
+            )}
+          </View>
         </>
       )}
 
       {isSearchActive && (
-        <GestureDetector gesture={panGesture}>
-          <View style={styles.searchContainer}>
-            <TouchableOpacity onPress={onCancelSearch} style={styles.backIcon}>
-              <Icon name="chevron-left" size={24} color="#bcbcbc" />
-            </TouchableOpacity>
+        <View style={styles.searchContainer}>
+          <TouchableOpacity onPress={onCancelSearch} style={styles.backIcon}>
+            <Icon name="chevron-left" size={24} color="#bcbcbc" />
+          </TouchableOpacity>
 
-            <TextInput
-              value={searchText}
-              onChangeText={(text) => {
-                
-                  onSearchTextChange(text);
-                
-              }}
-              onSubmitEditing={onSearchSubmit}
-              placeholder="Search"
-              style={[styles.searchInput, searchText && styles.clearText]}
-            />
+          <TextInput
+            value={searchText}
+            onChangeText={(text) => {
+              onSearchTextChange(text);
+            }}
+            onSubmitEditing={onSearchSubmit}
+            placeholder="Search"
+            style={[styles.searchInput, searchText && styles.clearText]}
+          />
 
-            {searchText.length > 0 && (
-              <TouchableOpacity
-                onPress={onClearSearch}
-                style={styles.clearButton}
-              >
-                <MaterialIcons name="clear" size={24} color="#bcbcbc" />
-              </TouchableOpacity>
-            )}
-
+          {searchText.length > 0 && (
             <TouchableOpacity
-              onPress={onSearchSubmit}
-              style={styles.checkIcon}
+              onPress={onClearSearch}
+              style={styles.clearButton}
             >
-              <Icon name="check" size={24} color="#4DA8DA" />
+              <MaterialIcons name="clear" size={24} color="#bcbcbc" />
             </TouchableOpacity>
-          </View>
-        </GestureDetector>
+          )}
+
+          <TouchableOpacity
+            onPress={onSearchSubmit}
+            style={styles.checkIcon}
+          >
+            <Icon name="check" size={24} color="#4DA8DA" />
+          </TouchableOpacity>
+        </View>
       )}
     </View>
   );
@@ -149,20 +167,26 @@ export const HeaderBar = ({
 
 const styles = StyleSheet.create({
   header: {
+    height: 60,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
     paddingHorizontal: 10,
-    paddingVertical: 5,
     backgroundColor: '#f8f9fa',
   },
   filmStoreText: {
     fontSize: 24,
     fontWeight: 'bold',
     color: '#333',
+    marginLeft: 15, // Add left margin to center text within the header
+  },
+  iconsContainer: {
+    flexDirection: 'row',         // Align children horizontally in a row
+    flex: 1,                      // Take up remaining space in the container
+    justifyContent: 'space-evenly',// Distribute icons evenly across the available width
+    alignItems: 'center',
   },
   headerIcon: {
-    marginLeft: 10,
+    marginLeft: 0,
   },
   searchContainer: {
     flexDirection: 'row',
@@ -194,5 +218,5 @@ const styles = StyleSheet.create({
   checkIcon: {
     marginLeft: 15, // Adjust spacing between search input and check button
     paddingRight: 20, // Add padding for better positioning
-  },
+  }
 });
