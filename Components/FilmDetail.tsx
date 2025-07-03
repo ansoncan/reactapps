@@ -1,102 +1,70 @@
-import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import Icon from 'react-native-vector-icons/Octicons';
-import PosterImage from './PosterImage';
+//FilmDetail.tsx
 
-export default function FilmDetailScreen({ route }: any) {
-  const navigation = useNavigation<any>();
-  const { film } = route.params;
 
-  useEffect(() => {
-    navigation.setOptions({
-      headerLeft: () => (
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.headerIcon}>
-          <Icon name="chevron-left" size={24} color="#bcbcbc" />
-        </TouchableOpacity>
-      ),
-      headerTitle: film.title,
-      
-      headerStyle: {
-        backgroundColor: '#fff',
-      },
-      headerTintColor: '#000',
-    });
-  }, [navigation, film]);
+import React from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import { useRoute } from '@react-navigation/native';
+import { addFilm } from '../service/film_api';
 
-  return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <PosterImage uri={film.poster} style={styles.image} />
-      <Text style={styles.title}>{film.title}</Text>
+// ... existing imports ...
 
-      <View style={styles.detailRow}>
-        <Text style={styles.detailKey}>Year:</Text>
-        <Text style={styles.detailValue}>{film.year}</Text>
-      </View>
+import { Film } from '../service/film_api'; // Import the Film type
 
-      <View style={styles.detailRow}>
-        <Text style={styles.detailKey}>Released:</Text>
-        <Text style={styles.detailValue}>{film.released}</Text>
-      </View>
-
-      <View style={styles.detailRow}>
-        <Text style={styles.detailKey}>Runtime:</Text>
-        <Text style={styles.detailValue}>{film.runtime} mins</Text>
-      </View>
-
-      <View style={styles.detailRow}>
-        <Text style={styles.detailKey}>Language:</Text>
-        <Text style={styles.detailValue}>{film.language}</Text>
-      </View>
-
-      <View style={styles.detailRow}>
-        <Text style={styles.detailKey}>Genre:</Text>
-        <Text style={styles.detailValue}>{film.genre}</Text>
-      </View>
-
-      <View style={styles.detailRow}>
-        <Text style={styles.detailKey}>Director:</Text>
-        <Text style={styles.detailValue}>{film.director}</Text>
-      </View>
-    </ScrollView>
-  );
+// Define the type for route params
+interface RouteParams {
+  film: Film;
+  isAdmin: boolean;
 }
 
+// Extract the type of the route params from the useRoute hook
+type NavigationRoute = {
+  key?: string; // Optional properties to satisfy RouteProp<ParamListBase>
+  name?: string; // Optional properties to satisfy RouteProp<ParamListBase>
+  path?: string; // Optional properties to satisfy RouteProp<ParamListBase>
+} & { params: RouteParams };
+
+const FilmDetail = () => {
+  // Type assertion to inform TypeScript about the expected types
+  const { film, isAdmin } = useRoute<NavigationRoute>().params;
+
+  const handleAddFilm = () => {
+    Alert.alert('Confirm', 'Add this film to the database?', [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Add',
+        onPress: async () => {
+          try {
+            await addFilm(film);
+            Alert.alert('Success', 'Film added.');
+          } catch (error) {
+            // Handle error as unknown and extract message
+            const errMsg = (error as Error).message || 'An error occurred';
+            Alert.alert('Error', errMsg);
+          }
+        },
+      },
+    ]);
+  };
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}>{film.title}</Text>
+      <Text>{film.year}</Text>
+      <Text>{film.genre}</Text>
+      {isAdmin && (
+        <TouchableOpacity onPress={handleAddFilm} style={styles.button}>
+          <Text style={styles.buttonText}>Add to Database</Text>
+        </TouchableOpacity>
+      )}
+    </View>
+  );
+};
+
 const styles = StyleSheet.create({
-  container: {
-    padding: 20,
-    alignItems: 'center',
-    paddingTop: 50, // iPhone-specific adjustment
-  },
-  image: {
-    width: 250,
-    height: 350,
-    borderRadius: 10,
-    marginBottom: 20,
-  },
-  title: {
-    fontSize: 24, // Adjusting for iPhone demo
-    fontWeight: 'bold',
-    marginBottom: 10,
-    textAlign: 'center',
-  },
-  detailRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    width: '80%',
-    marginBottom: 5, // Adjusting for iPhone demo
-  },
-  detailKey: {
-    fontSize: 16,
-    width: 120,
-    textAlign: 'left',
-  },
-  detailValue: {
-    fontSize: 16,
-    flex: 1,
-    marginLeft: 10,
-  },
-  headerIcon: {
-    marginLeft: 15, // Adjusting for iPhone demo
-  },
+  container: { padding: 20 },
+  title: { fontSize: 24, fontWeight: 'bold' },
+  button: { marginTop: 20, backgroundColor: '#4DA8DA', padding: 10 },
+  buttonText: { color: '#fff', textAlign: 'center' },
 });
+
+export default FilmDetail;

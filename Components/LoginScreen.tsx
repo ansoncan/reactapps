@@ -1,216 +1,51 @@
-import React, { useState, useEffect } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  Image,
-  StyleSheet
-} from 'react-native';
-import { Buffer } from 'buffer';
+
+import React, { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import Icon from 'react-native-vector-icons/Ionicons';
-import { RouteProp } from '@react-navigation/native';
-import { RootStackParamList } from '../App';
+import { useNavigation } from '@react-navigation/native';
+import { loginUser } from '../service/film_api';
+import Footer from './Footer';
 
-type LoginScreenRouteProp = RouteProp<RootStackParamList, 'LoginScreen'>;
-
-type Props = {
-  route: LoginScreenRouteProp;
-  navigation: any; // Add navigation prop type
-};
-
-const LoginScreen: React.FC<Props> = ({ navigation }) => {
+const LoginScreen = () => {
+  const navigation = useNavigation();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [secureTextEntry, setSecureTextEntry] = useState(true);
   const [errorMessage, setErrorMessage] = useState('');
-
-  // Set base URL for API requests
-  const BASE_URL = 'http://pcpdfilm.starsknights.com/api/v2'; // Change to 'https://' if supported
-
-  // Set navigation header options
-  useEffect(() => {
-    navigation.setOptions({
-      headerTitle: 'Member Login',
-      headerLeft: () => (
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.headerIcon}>
-          <MaterialIcons name="chevron-left" size={28} color="#bcbcbc" />
-        </TouchableOpacity>
-      ),
-    });
-  }, [navigation]);
 
   const handleLogin = async () => {
     try {
-      console.log('Attempting to log in with:', { username, password });
-
-      // Create credentials and encode them for Basic Authentication
-      const credentials = `${username}:${password}`;
-      const encodedCredentials = Buffer.from(credentials).toString('base64');
-      console.log('Encoded Credentials:', encodedCredentials);
-
-      const url = `${BASE_URL}/user`;
-      console.log('Fetching from:', url);
-
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: {
-          Authorization: `Basic ${encodedCredentials}`,
-        },
-      });
-
-      if (response.ok) {
-        const json = await response.json();
-        console.log('Login Response Data:', json);
-
-        // Save token to AsyncStorage
-        if (json.key) {
-          await AsyncStorage.setItem('token', json.key);
-        }
-
-        // Get user details request with key (k) in headers using fetch
-        const userDetailsResponse = await fetch(`${BASE_URL}/user/detail`, {
-          method: 'GET',
-          headers: {
-            'k': json.key,
-          },
-        });
-
-        if (userDetailsResponse.ok) {
-          const userData = await userDetailsResponse.json();
-          console.log('User  Details Response Data:', userData);
-
-          // Save user data to AsyncStorage
-          await AsyncStorage.setItem('user', JSON.stringify(userData));
-
-          // Navigate to HomeScreen
-          navigation.navigate('HomeScreen');
-        } else {
-          const userDetailsError = await userDetailsResponse.text();
-          console.error('User  Details Error:', userDetailsResponse.status, userDetailsError);
-          setErrorMessage('Failed to fetch user details. Please try again later.');
-        }
+      const { key, user } = await loginUser(username, password);
+      await AsyncStorage.setItem('token', key);
+      await AsyncStorage.setItem('user', JSON.stringify(user));
+      navigation.reset({ index: 0, routes: [{ name: 'HomeScreen' }] });
+    } catch (error) {
+      if (error instanceof Error) {
+        setErrorMessage(error.message || 'Login failed');
       } else {
-        const loginError = await response.text();
-        console.error('Login Error:', response.status, loginError);
-        setErrorMessage('Invalid credentials or login failed. Please try again.');
-      }
-    } catch (error: any) {
-      if (error instanceof TypeError && error.message === 'Network request failed') {
-        console.error('Network Request Failed', { message: error.message });
-        setErrorMessage('Network request failed. Please check your internet or API server.');
-      } else {
-        console.error('Error during login:', error);
-        setErrorMessage(`Unexpected error: ${JSON.stringify(error, null, 2)}`);
+        setErrorMessage('An unknown error occurred');
       }
     }
   };
 
   return (
     <View style={styles.container}>
-      <View style={styles.logoContainer}>
-        <Image
-          source={require('../assets/fs_logo.png')}
-          style={styles.logo}
-          resizeMode="contain"
-        />
-      </View>
-      <TextInput
-        style={styles.input}
-        placeholder="Username"
-        value={username}
-        onChangeText={setUsername}
-        autoCapitalize="none"
-      />
-      <View style={styles.passwordContainer}>
-        <TextInput
-          style={styles.input}
-          placeholder="Password"
-          secureTextEntry={secureTextEntry}
-          value={password}
-          onChangeText={setPassword}
-        />
-        <TouchableOpacity
-          style={styles.eyeIcon}
-          onPress={() => setSecureTextEntry(!secureTextEntry)}
-        >
-          <Icon name={secureTextEntry ? 'eye-off' : 'eye'} size={20} />
-        </TouchableOpacity>
-      </View>
-      {errorMessage !== '' && (
-        <Text style={styles.error}>{errorMessage}</Text>
-      )}
-      <TouchableOpacity style={styles.button} onPress={handleLogin}>
+      <TextInput placeholder="Username" value={username} onChangeText={setUsername} style={styles.input} />
+      <TextInput placeholder="Password" value={password} onChangeText={setPassword} secureTextEntry style={styles.input} />
+      {errorMessage ? <Text style={styles.error}>{errorMessage}</Text> : null}
+      <TouchableOpacity onPress={handleLogin} style={styles.button}>
         <Text style={styles.buttonText}>Login</Text>
       </TouchableOpacity>
-
-      {/* New Button to Navigate to TestApi Screen */}
-      <TouchableOpacity
-        style={[styles.button, styles.testButton]}
-        onPress={() => navigation.navigate('TestApi')}
-      >
-        <Text style={styles.buttonText}>Go to API Test</Text>
-      </TouchableOpacity>
+      <Footer />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: 'white',
-    paddingTop: 10,
-    paddingHorizontal: 20,
-  },
-  logoContainer: {
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  logo: {
-    width: 150,
-    height: 150,
-  },
-  input: {
-    width: '100%',
-    height: 50,
-    borderColor: '#e0e0e0',
-    borderWidth: 1,
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    marginBottom: 15,
-    backgroundColor: '#f9f9f9',
-  },
-  passwordContainer: {
-    position: 'relative',
-  },
-  eyeIcon: {
-    position: 'absolute',
-    right: 15,
-    top: 15,
-  },
-  error: {
-    color: 'red',
-    marginBottom: 10,
-    textAlign: 'center',
-  },
-  button: {
-    backgroundColor: '#4DA8DA',
-    borderRadius: 8,
-    paddingVertical: 14,
-    width: '100%',
-    alignItems: 'center',
-    marginTop: 10,
-  },
-  buttonText: {
-    color: 'white',
-    fontWeight: '600',
-    fontSize: 16,
-  },
-  headerIcon: {
-    marginLeft: 15,
-  },
+  container: { flex: 1, padding: 20, justifyContent: 'center' },
+  input: { borderWidth: 1, borderColor: '#ccc', padding: 10, marginBottom: 10 },
+  button: { backgroundColor: '#4DA8DA', padding: 15, alignItems: 'center' },
+  buttonText: { color: '#fff', fontWeight: 'bold' },
+  error: { color: 'red', marginBottom: 10 },
 });
 
 export default LoginScreen;
