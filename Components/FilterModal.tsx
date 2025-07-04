@@ -72,7 +72,7 @@ export const FilterModal = ({
 
   return (
     <Modal visible={isVisible} transparent={true} animationType="slide">
-      <TouchableWithoutFeedback onPress={onClose}>
+      <TouchableWithoutFeedback>
         <View style={styles.modalBackground}>
           <View style={styles.modalContent}>
             {/* Month Selection */}
@@ -133,17 +133,32 @@ export const FilterModal = ({
                   })}
                 </View>
                 <Text style={styles.filmCount}>
-                  {filteredFilms.length} films found
+                  {filmsMatchingMonths.filter(f => {
+                    const match = f.released?.match(/^(\d{1,2})\s([A-Za-z]{3})\s(\d{4})$/);
+                    if (!match) return false;
+                    const [, , , yearStr] = match;
+                    const year = parseInt(yearStr, 10);
+                    return selectedYears.length === 0 || selectedYears.includes(year);
+                  }).length} films found
                 </Text>
               </View>
             )}
 
             {/* Action Buttons */}
             <View style={styles.buttonRow}>
-              <TouchableOpacity style={styles.actionButton} onPress={onClose}>
+              <TouchableOpacity
+                style={styles.actionButton}
+                onPress={() => {
+                  applyFilters();
+                  onClose(); // Close modal only when user taps "View Result"
+                }}
+              >
                 <Text style={styles.actionButtonText}>View Result</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.actionButton} onPress={clearFilters}>
+              <TouchableOpacity
+                style={styles.actionButton}
+                onPress={clearFilters}
+              >
                 <Text style={styles.actionButtonText}>Clear Filters</Text>
               </TouchableOpacity>
             </View>
@@ -157,23 +172,29 @@ export const FilterModal = ({
 const styles = StyleSheet.create({
   modalBackground: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    backgroundColor: 'rgba(0,0,0,0.4)',
     justifyContent: 'center',
     alignItems: 'center',
   },
   modalContent: {
-    width: '85%',
+    width: '90%',
     backgroundColor: '#fff',
     padding: 20,
-    borderRadius: 10,
+    borderRadius: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    elevation: 6,
   },
   section: {
     marginBottom: 20,
   },
   sectionTitle: {
-    fontSize: 16, // Adjusting for iPhone demo
-    fontWeight: 'bold',
+    fontSize: 17,
+    fontWeight: '600',
     marginBottom: 10,
+    color: '#1c1c1e',
   },
   buttonContainer: {
     flexDirection: 'row',
@@ -182,21 +203,21 @@ const styles = StyleSheet.create({
   },
   button: {
     width: '30%',
-    padding: 12, // Adjusting for iPhone demo
-    marginVertical: 5,
-    borderRadius: 5,
-    backgroundColor: '#f9f9f9',
+    paddingVertical: 10,
+    marginVertical: 6,
+    borderRadius: 8,
+    backgroundColor: '#f2f2f7',
     borderWidth: 1,
     borderColor: '#ccc',
     alignItems: 'center',
   },
   selectedButton: {
-    backgroundColor: '#4DA8DA',
-    borderColor: '#4DA8DA',
+    backgroundColor: '#007AFF',
+    borderColor: '#007AFF',
   },
   buttonText: {
     color: '#333',
-    fontSize: 12, // Adjusting for iPhone demo
+    fontSize: 14,
     textAlign: 'center',
   },
   selectedButtonText: {
@@ -205,23 +226,25 @@ const styles = StyleSheet.create({
   filmCount: {
     textAlign: 'center',
     marginTop: 10,
-    fontSize: 14, // Adjusting for iPhone demo
-    color: '#555',
+    fontSize: 15,
+    color: '#666',
   },
   buttonRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    marginTop: 10,
   },
   actionButton: {
     flex: 1,
-    paddingVertical: 12, // Adjusting for iPhone demo
+    paddingVertical: 12,
     marginHorizontal: 5,
-    borderRadius: 5,
-    backgroundColor: '#4DA8DA',
+    borderRadius: 8,
+    backgroundColor: '#007AFF',
     alignItems: 'center',
   },
   actionButtonText: {
     color: '#fff',
-    fontWeight: 'bold',
+    fontWeight: '600',
+    fontSize: 16,
   },
 });

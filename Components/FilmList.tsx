@@ -1,9 +1,13 @@
-
-
-// // Components/FilmList.tsx
-
 // import React from 'react';
-// import { FlatList, Text, TouchableOpacity, StyleSheet, NativeSyntheticEvent, NativeScrollEvent } from 'react-native';
+// import {
+//   FlatList,
+//   Text,
+//   TouchableOpacity,
+//   StyleSheet,
+//   NativeSyntheticEvent,
+//   NativeScrollEvent,
+//   View,
+// } from 'react-native';
 // import PosterImage from './PosterImage';
 // import { useNavigation, NavigationProp } from '@react-navigation/native';
 // import { Film } from '../service/film_api';
@@ -19,7 +23,10 @@
 //   const navigation = useNavigation<NavigationProp<any, any>>();
 
 //   const renderItem = ({ item }: { item: Film }) => (
-//     <TouchableOpacity onPress={() => navigation.navigate('FilmDetail', { film: item })} style={styles.item}>
+//     <TouchableOpacity
+//       onPress={() => navigation.navigate('FilmDetail', { film: item })}
+//       style={styles.item}
+//     >
 //       <PosterImage uri={item.poster} style={styles.image} />
 //       <Text style={styles.title}>{item.title}</Text>
 //     </TouchableOpacity>
@@ -68,8 +75,17 @@
 // });
 
 // export default FilmList;
+
 import React from 'react';
-import { FlatList, Text, TouchableOpacity, StyleSheet, NativeSyntheticEvent, NativeScrollEvent } from 'react-native';
+import {
+  FlatList,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  NativeSyntheticEvent,
+  NativeScrollEvent,
+  View,
+} from 'react-native';
 import PosterImage from './PosterImage';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { Film } from '../service/film_api';
@@ -85,7 +101,11 @@ const FilmList: React.FC<Props> = ({ films, onScroll, listRef, footer }) => {
   const navigation = useNavigation<NavigationProp<any, any>>();
 
   const renderItem = ({ item }: { item: Film }) => (
-    <TouchableOpacity onPress={() => navigation.navigate('FilmDetail', { film: item })} style={styles.item}>
+    <TouchableOpacity
+      key={item._id} // ✅ Optional: not required here, but safe
+      onPress={() => navigation.navigate('FilmDetail', { film: item })}
+      style={styles.item}
+    >
       <PosterImage uri={item.poster} style={styles.image} />
       <Text style={styles.title}>{item.title}</Text>
     </TouchableOpacity>
@@ -96,13 +116,12 @@ const FilmList: React.FC<Props> = ({ films, onScroll, listRef, footer }) => {
       ref={listRef}
       data={films}
       renderItem={renderItem}
-      keyExtractor={(item) => item._id}
+      keyExtractor={(item, index) => item._id || index.toString()} // ✅ Safe fallback
       onEndReachedThreshold={0.5}
       onEndReached={() => console.log('Load more films...')}
       onScroll={onScroll}
       scrollEventThrottle={16}
       ListFooterComponent={footer}
-      ListFooterComponentStyle={{ paddingBottom: 30 }} // Ensures footer has space
     />
   );
 };
