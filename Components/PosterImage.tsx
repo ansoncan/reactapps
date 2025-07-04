@@ -22,13 +22,13 @@ import React, { useState } from 'react';
 import { Image, StyleProp, ImageStyle } from 'react-native';
 
 interface PosterImageProps {
-  uri: string;
+  uri?: string; // Make it optional
   style: StyleProp<ImageStyle>;
 }
 
 const PosterImage: React.FC<PosterImageProps> = ({ uri, style }) => {
   const [error, setError] = useState(false);
-  const isInvalid = error || !uri || !uri.startsWith('http');
+  const isInvalid = error || typeof uri !== 'string' || !uri.startsWith('http');
 
   return (
     <Image

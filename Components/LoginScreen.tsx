@@ -1,6 +1,5 @@
-
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import { loginUser } from '../service/film_api';
@@ -16,7 +15,9 @@ const LoginScreen = () => {
     try {
       const { key, user } = await loginUser(username, password);
       await AsyncStorage.setItem('token', key);
-      await AsyncStorage.setItem('user', JSON.stringify(user));
+      const storedToken = await AsyncStorage.getItem('token');
+      console.log('Stored token after login:', storedToken);
+
       navigation.reset({ index: 0, routes: [{ name: 'HomeScreen' }] });
     } catch (error) {
       if (error instanceof Error) {
@@ -29,8 +30,19 @@ const LoginScreen = () => {
 
   return (
     <View style={styles.container}>
-      <TextInput placeholder="Username" value={username} onChangeText={setUsername} style={styles.input} />
-      <TextInput placeholder="Password" value={password} onChangeText={setPassword} secureTextEntry style={styles.input} />
+      <TextInput
+        placeholder="Username"
+        value={username}
+        onChangeText={setUsername}
+        style={styles.input}
+      />
+      <TextInput
+        placeholder="Password"
+        value={password}
+        onChangeText={setPassword}
+        secureTextEntry
+        style={styles.input}
+      />
       {errorMessage ? <Text style={styles.error}>{errorMessage}</Text> : null}
       <TouchableOpacity onPress={handleLogin} style={styles.button}>
         <Text style={styles.buttonText}>Login</Text>
