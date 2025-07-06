@@ -7,10 +7,11 @@
 // //   Modal,
 // //   StyleSheet,
 // //   ScrollView,
+// //   TouchableOpacity,
 // // } from "react-native";
 // // import AsyncStorage from "@react-native-async-storage/async-storage";
-// // import PosterImage from "../Components/PosterImage"; // Ensure correct import
-// // import AddFilmScreen from "./AddFilmScreen"; // Assuming this is the correct path
+// // import PosterImage from "../Components/PosterImage";
+// // import AddFilmScreen from "./AddFilmScreen";
 // // import { useRoute } from "@react-navigation/native";
 
 // // const FilmDetail = () => {
@@ -53,7 +54,6 @@
 
 // //   const film = route.params.film;
 
-// //   // Add console logs to debug
 // //   console.log("userData?.type:", userData?.type);
 // //   console.log("film.fromSearch:", film.fromSearch);
 
@@ -62,7 +62,9 @@
 // //   }
 
 // //   return (
-// //     <ScrollView contentContainerStyle={styles.container}>
+// //     // <ScrollView contentContainerStyle={styles.container}>
+// //     <ScrollView contentContainerStyle={[styles.container, { flexGrow: 1 }]}>
+
 // //       <PosterImage uri={film.poster} style={styles.poster} />
 // //       <Text style={styles.title}>{film.title}</Text>
 // //       <View style={styles.detailCard}>
@@ -81,9 +83,14 @@
 // //         ))}
 // //       </View>
 
-// //       {/* Show "Add Film" button only if userData is not null, user.type === 1 and film comes from search */}
 // //       {userData && userData.type === 1 && film.fromSearch && (
-// //         <Button title="Add Film" onPress={() => setModalVisible(true)} />
+      
+
+
+// //           <TouchableOpacity style={styles.addButton} onPress={() => setModalVisible(true)}>
+// //             <Text style={styles.addButtonText}>Add Film</Text>
+// //           </TouchableOpacity>
+
 // //       )}
 
 // //       <Modal
@@ -94,15 +101,12 @@
 // //           setModalVisible(!modalVisible);
 // //         }}
 // //       >
-// //         {/* AddFilmScreen component with film data passed */}
 // //         {film && (
 // //           <View style={styles.modalContainer}>
-// //           <AddFilmScreen
-// //             film={film}
-// //             closeModal={() => setModalVisible(false)}
-// //           />
-// // </View>
-
+// //             <View style={styles.modalContent}>
+// //               <AddFilmScreen film={film} closeModal={() => setModalVisible(false)} />
+// //             </View>
+// //           </View>
 // //         )}
 // //       </Modal>
 // //     </ScrollView>
@@ -130,34 +134,79 @@
 // //     color: "#1c1c1e",
 // //   },
 // //   detailCard: {
-// //     width: "90%",
-// //     backgroundColor: "#f2f2f7",
-// //     borderRadius: 12,
-// //     padding: 18,
-// //     marginBottom: 8,
-// //     shadowColor: "#000",
-// //     shadowOffset: { width: 0, height: 2 },
-// //     shadowOpacity: 0.1,
-// //     shadowRadius: 6,
-// //   },
-// //   detailRow: {
-// //     marginBottom: 10,
-// //   },
-// //   detailLabel: {
-// //     fontSize: 14,
-// //     fontWeight: "600",
-// //     color: "#3c3c43",
-// //     marginBottom: 0,
-// //   },
-// //   detailValue: {
-// //     fontSize: 16,
-// //     color: "#1c1c1e",
-// //   },
+// //   width: "100%",
+// //   backgroundColor: "#fff",
+// //   borderRadius: 16,
+// //   paddingVertical: 20,
+// //   paddingHorizontal: 24,
+// //   marginBottom: 16,
+// //   shadowColor: "#000",
+// //   shadowOffset: { width: 0, height: 2 },
+// //   shadowOpacity: 0.08,
+// //   shadowRadius: 10,
+// //   elevation: 3,
+// // },
+
+// // detailRow: {
+// //   flexDirection: "row",
+// //   justifyContent: "space-between",
+// //   alignItems: "center",
+// //   paddingVertical: 12,
+// //   borderBottomWidth: 1,
+// //   borderBottomColor: "#ececec",
+// // },
+
+// // detailLabel: {
+// //   fontSize: 16,
+// //   fontWeight: "500",
+// //   color: "#8e8e93",
+// // },
+
+// // detailValue: {
+// //   fontSize: 16,
+// //   fontWeight: "400",
+// //   color: "#1c1c1e",
+// //   textAlign: "right",
+// //   flexShrink: 1,
+// // },
+
 // //   modalContainer: {
 // //     flex: 1,
-// //     backgroundColor: "rgba(0,0,0,0.4)",
 // //     justifyContent: "center",
 // //     alignItems: "center",
+// //     backgroundColor: "rgba(0, 0, 0, 0.3)",
+// //   },
+
+// //   addButton: {
+// //   backgroundColor: "#007AFF", // iOS blue
+// //   paddingVertical: 12,
+// //   paddingHorizontal: 24,
+// //   borderRadius: 10,
+// //   marginTop: 16,
+// //   shadowColor: "#000",
+// //   shadowOffset: { width: 0, height: 2 },
+// //   shadowOpacity: 0.2,
+// //   shadowRadius: 4,
+// //   elevation: 3,
+// // },
+
+// // addButtonText: {
+// //   color: "#fff",
+// //   fontSize: 16,
+// //   fontWeight: "600",
+// //   textAlign: "center",
+// // },
+
+// //   modalContent: {
+// //     width: "85%",
+// //     padding: 20,
+// //     backgroundColor: "#fff",
+// //     borderRadius: 16,
+// //     shadowColor: "#000",
+// //     shadowOffset: { width: 0, height: 4 },
+// //     shadowOpacity: 0.3,
+// //     shadowRadius: 8,
+// //     elevation: 5,
 // //   },
 // // });
 
@@ -171,10 +220,11 @@
 //   Modal,
 //   StyleSheet,
 //   ScrollView,
+//   TouchableOpacity,
 // } from "react-native";
 // import AsyncStorage from "@react-native-async-storage/async-storage";
-// import PosterImage from "../Components/PosterImage"; // Ensure correct import
-// import AddFilmScreen from "./AddFilmScreen"; // Assuming this is the correct path
+// import PosterImage from "../Components/PosterImage";
+// import AddFilmScreen from "./AddFilmScreen";
 // import { useRoute } from "@react-navigation/native";
 
 // const FilmDetail = () => {
@@ -196,7 +246,7 @@
 //         const user = await AsyncStorage.getItem("user");
 //         if (user) {
 //           const parsedUser = JSON.parse(user);
-//           console.log("User data:", parsedUser);
+//           console.log("User data:", JSON.stringify(parsedUser, null, 2));
 //           setUserData(parsedUser);
 //         } else {
 //           console.log("No user data found");
@@ -217,16 +267,17 @@
 
 //   const film = route.params.film;
 
-//   // Add console logs to debug
 //   console.log("userData?.type:", userData?.type);
-//   console.log("film.fromSearch:", film.fromSearch);
+//   console.log("film.fromSearch:", JSON.stringify(film.fromSearch));
 
 //   if (!userData && !film) {
 //     return <Text>Loading...</Text>;
 //   }
 
 //   return (
-//     <ScrollView contentContainerStyle={styles.container}>
+//     // <ScrollView contentContainerStyle={styles.container}>
+//     <ScrollView contentContainerStyle={[styles.container, { flexGrow: 1 }]}>
+
 //       <PosterImage uri={film.poster} style={styles.poster} />
 //       <Text style={styles.title}>{film.title}</Text>
 //       <View style={styles.detailCard}>
@@ -245,9 +296,10 @@
 //         ))}
 //       </View>
 
-//       {/* Show "Add Film" button only if userData is not null, user.type === 1 and film comes from search */}
 //       {userData && userData.type === 1 && film.fromSearch && (
-//         <Button title="Add Film" onPress={() => setModalVisible(true)} />
+//           <TouchableOpacity style={styles.addButton} onPress={() => setModalVisible(true)}>
+//           <Text style={styles.addButtonText}>Add Film</Text>
+//         </TouchableOpacity>
 //       )}
 
 //       <Modal
@@ -258,13 +310,11 @@
 //           setModalVisible(!modalVisible);
 //         }}
 //       >
-//         {/* AddFilmScreen component with film data passed */}
 //         {film && (
 //           <View style={styles.modalContainer}>
-//             <AddFilmScreen
-//               film={film}
-//               closeModal={() => setModalVisible(false)}
-//             />
+//             <View style={styles.modalContent}>
+//               <AddFilmScreen film={film} closeModal={() => setModalVisible(false)} />
+//             </View>
 //           </View>
 //         )}
 //       </Modal>
@@ -293,34 +343,79 @@
 //     color: "#1c1c1e",
 //   },
 //   detailCard: {
-//     width: "90%",
-//     backgroundColor: "#f2f2f7",
-//     borderRadius: 12,
-//     padding: 18,
-//     marginBottom: 8,
-//     shadowColor: "#000",
-//     shadowOffset: { width: 0, height: 2 },
-//     shadowOpacity: 0.1,
-//     shadowRadius: 6,
-//   },
-//   detailRow: {
-//     marginBottom: 10,
-//   },
-//   detailLabel: {
-//     fontSize: 14,
-//     fontWeight: "600",
-//     color: "#3c3c43",
-//     marginBottom: 0,
-//   },
-//   detailValue: {
-//     fontSize: 16,
-//     color: "#1c1c1e",
-//   },
+//   width: "100%",
+//   backgroundColor: "#fff",
+//   borderRadius: 16,
+//   paddingVertical: 20,
+//   paddingHorizontal: 24,
+//   marginBottom: 16,
+//   shadowColor: "#000",
+//   shadowOffset: { width: 0, height: 2 },
+//   shadowOpacity: 0.08,
+//   shadowRadius: 10,
+//   elevation: 3,
+// },
+
+// detailRow: {
+//   flexDirection: "row",
+//   justifyContent: "space-between",
+//   alignItems: "center",
+//   paddingVertical: 12,
+//   borderBottomWidth: 1,
+//   borderBottomColor: "#ececec",
+// },
+
+// detailLabel: {
+//   fontSize: 16,
+//   fontWeight: "500",
+//   color: "#8e8e93",
+// },
+
+// detailValue: {
+//   fontSize: 16,
+//   fontWeight: "400",
+//   color: "#1c1c1e",
+//   textAlign: "right",
+//   flexShrink: 1,
+// },
+
 //   modalContainer: {
 //     flex: 1,
 //     justifyContent: "center",
 //     alignItems: "center",
-//     backgroundColor: '#fff', // Changed to white for visibility
+//     backgroundColor: "rgba(0, 0, 0, 0.3)",
+//   },
+
+//   addButton: {
+//   backgroundColor: "#007AFF", // iOS blue
+//   paddingVertical: 12,
+//   paddingHorizontal: 24,
+//   borderRadius: 10,
+//   marginTop: 16,
+//   shadowColor: "#000",
+//   shadowOffset: { width: 0, height: 2 },
+//   shadowOpacity: 0.2,
+//   shadowRadius: 4,
+//   elevation: 3,
+// },
+
+// addButtonText: {
+//   color: "#fff",
+//   fontSize: 16,
+//   fontWeight: "600",
+//   textAlign: "center",
+// },
+
+//   modalContent: {
+//     width: "85%",
+//     padding: 20,
+//     backgroundColor: "#fff",
+//     borderRadius: 16,
+//     shadowColor: "#000",
+//     shadowOffset: { width: 0, height: 4 },
+//     shadowOpacity: 0.3,
+//     shadowRadius: 8,
+//     elevation: 5,
 //   },
 // });
 
@@ -330,10 +425,10 @@ import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
-  Button,
   Modal,
   StyleSheet,
   ScrollView,
+  TouchableOpacity,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import PosterImage from "../Components/PosterImage";
@@ -359,7 +454,7 @@ const FilmDetail = () => {
         const user = await AsyncStorage.getItem("user");
         if (user) {
           const parsedUser = JSON.parse(user);
-          console.log("User data:", parsedUser);
+          console.log("User data:", JSON.stringify(parsedUser, null, 2));
           setUserData(parsedUser);
         } else {
           console.log("No user data found");
@@ -381,14 +476,14 @@ const FilmDetail = () => {
   const film = route.params.film;
 
   console.log("userData?.type:", userData?.type);
-  console.log("film.fromSearch:", film.fromSearch);
+  console.log("film.fromSearch:", JSON.stringify(film.fromSearch));
 
   if (!userData && !film) {
     return <Text>Loading...</Text>;
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView contentContainerStyle={[styles.container, { flexGrow: 1 }]}>
       <PosterImage uri={film.poster} style={styles.poster} />
       <Text style={styles.title}>{film.title}</Text>
       <View style={styles.detailCard}>
@@ -408,7 +503,9 @@ const FilmDetail = () => {
       </View>
 
       {userData && userData.type === 1 && film.fromSearch && (
-        <Button title="Add Film" onPress={() => setModalVisible(true)} />
+        <TouchableOpacity style={styles.addButton} onPress={() => setModalVisible(true)}>
+          <Text style={styles.addButtonText}>Add Film</Text>
+        </TouchableOpacity>
       )}
 
       <Modal
@@ -433,7 +530,7 @@ const FilmDetail = () => {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
+    padding: 10,
     backgroundColor: "#fff",
     alignItems: "center",
   },
@@ -441,39 +538,48 @@ const styles = StyleSheet.create({
     width: "60%",
     aspectRatio: 2 / 3,
     borderRadius: 12,
-    marginBottom: 0,
+    marginBottom: 10,
     backgroundColor: "#eee",
   },
   title: {
-    fontSize: 26,
-    fontWeight: "600",
+    fontSize: 20,
+    fontWeight: "500",
     textAlign: "center",
-    marginBottom: 10,
+    marginBottom: 15,
     color: "#1c1c1e",
   },
   detailCard: {
-    width: "90%",
-    backgroundColor: "#f2f2f7",
-    borderRadius: 12,
-    padding: 18,
-    marginBottom: 8,
+    width: "100%",
+    backgroundColor: "#fff",
+    borderRadius: 16,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    marginBottom: 16,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
+    shadowOpacity: 0.08,
+    shadowRadius: 10,
+    elevation: 3,
   },
   detailRow: {
-    marginBottom: 10,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ececec",
   },
   detailLabel: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#3c3c43",
-    marginBottom: 0,
+    fontSize: 16,
+    fontWeight: "500",
+    color: "#8e8e93",
   },
   detailValue: {
     fontSize: 16,
+    fontWeight: "400",
     color: "#1c1c1e",
+    textAlign: "right",
+    flexShrink: 1,
   },
   modalContainer: {
     flex: 1,
@@ -483,7 +589,7 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     width: "85%",
-    padding: 20,
+    padding: 10,
     backgroundColor: "#fff",
     borderRadius: 16,
     shadowColor: "#000",
@@ -491,6 +597,24 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 5,
+  },
+  addButton: {
+    backgroundColor: "#007AFF",
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 10,
+    marginTop: -10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  addButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "600",
+    textAlign: "center",
   },
 });
 
