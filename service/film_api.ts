@@ -166,34 +166,32 @@ export const addFilm = async (film: Film) => {
   return result;
 };
 
+// export const searchFilm = async (title: string): Promise<Film> => {
+//   const response = await fetch(`${BASE_URL}/ofilm/${title}`);
+//   if (!response.ok) {
+//     const errorText = await response.text();
+//     throw new Error('Failed to fetch film data');
+//   }
+//   const film = await response.json();
+//   return film;
+// };
+
 export const searchFilm = async (title: string): Promise<Film> => {
   const response = await fetch(`${BASE_URL}/ofilm/${title}`);
+
+  console.log('SearchFilm Response Status:', response.status);
+
+  const responseText = await response.text();
+  console.log('SearchFilm Response Body:', responseText);
+
   if (!response.ok) {
-    const errorText = await response.text();
     throw new Error('Failed to fetch film data');
   }
-  const film = await response.json();
+
+  const film = JSON.parse(responseText);
   return film;
 };
 
-// export const submitFilm = async (film: Film): Promise<void> => {
-//   const token = await AsyncStorage.getItem('token');
-//   if (!token) throw new Error('Token is missing');
-
-//   const response = await fetch(`${BASE_URL}/film`, {
-//     method: 'POST',
-//     headers: {
-//       'Content-Type': 'application/json',
-//       k: token,
-//     },
-//     body: JSON.stringify(film),
-//   });
-
-//   if (!response.ok) {
-//     const errorText = await response.text();
-//     throw new Error('Failed to add film');
-//   }
-// };
 
 export const submitFilm = async (film: Film): Promise<void> => {
   const token = await AsyncStorage.getItem('token');

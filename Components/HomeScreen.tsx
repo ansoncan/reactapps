@@ -70,21 +70,72 @@ const HomeScreen = ({ navigation }: any) => {
     fetchAllFilms();
   };
 
-  const handleSearchSubmit = async () => {
-    if (!searchText.trim()) return;
-    try {
-      setLoading(true);
-      const result = await searchFilm(searchText.trim());
-      setFilms([result]);
-      setIsSearchActive(false);
-      setIsSearchSubmitted(true); // Mark as search submitted
-    } catch (error) {
-      console.error("Search failed:", error);
+  // const handleSearchSubmit = async () => {
+  //   if (!searchText.trim()) return;
+  //   try {
+  //     setLoading(true);
+  //     const result = await searchFilm(searchText.trim());
+  //     setFilms([result]);
+  //     setIsSearchActive(false);
+  //     setIsSearchSubmitted(true); // Mark as search submitted
+  //   } catch (error) {
+  //     console.error("Search failed:", error);
+  //     setFilms([]);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+
+//   const handleSearchSubmit = async () => {
+//   if (!searchText.trim()) return;
+//   try {
+//     setLoading(true);
+//     const result = await searchFilm(searchText.trim());
+
+//     if (result === null) {
+//       setFilms([]); // ✅ Truly empty array
+//     } else {
+//       setFilms([result]);
+//     }
+
+//     setIsSearchActive(false);
+//     setIsSearchSubmitted(true);
+//   } catch (error) {
+//     console.error("Search failed:", error);
+//     setFilms([]);
+//   } finally {
+//     setLoading(false);
+//   }
+// };
+
+
+const handleSearchSubmit = async () => {
+  if (!searchText.trim()) return;
+  try {
+    setLoading(true);
+    const result = await searchFilm(searchText.trim());
+
+    console.log("Search result:", result);
+
+    if (result === null || Object.keys(result).length === 0) {
+      console.log("Search returned empty object or null");
       setFilms([]);
-    } finally {
-      setLoading(false);
+    } else {
+      setFilms([result]);
     }
-  };
+
+    setIsSearchActive(false);
+    setIsSearchSubmitted(true);
+  } catch (error) {
+    console.error("Search failed:", error);
+    setFilms([]);
+  } finally {
+    setLoading(false);
+  }
+};
+
+
 
   const handleClearSearch = async () => {
     setSearchText("");
@@ -186,6 +237,7 @@ const HomeScreen = ({ navigation }: any) => {
             showDropdown={showDropdown}
             toggleDropdown={toggleDropdown}
             scrollToTop={scrollToTop}
+            
             hideDropdown={hideDropdown}
           />
         {/* </View> */}
@@ -216,12 +268,6 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
   },
-  // scrollIndexWrapper: {
-  //   position: "absolute",
-  //   bottom: 20,
-  //   right: 20,
-  //   zIndex: 1000,
-  // },
 });
 
 export default HomeScreen;

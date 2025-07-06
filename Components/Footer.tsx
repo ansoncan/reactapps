@@ -69,9 +69,16 @@ const Footer = () => {
 
 const styles = StyleSheet.create({
   safeArea: {
-    backgroundColor: "#fff",
+    backgroundColor: "",
+
+  position: "absolute",
+  bottom: -30,
+  left: 0,
+  right: 0,
+
   },
   footer: {
+    height: 30, 
     justifyContent: "center",
     alignItems: "center",
     borderTopWidth: 1,
@@ -80,7 +87,7 @@ const styles = StyleSheet.create({
     flexShrink: 0,
   },
   text: {
-    fontSize: 12,
+    fontSize: 16,
     color: "#333",
   },
 });

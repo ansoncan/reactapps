@@ -158,7 +158,7 @@ const UserProfileScreen = () => {
                 </TouchableOpacity>
               </View>
 
-              <View style={styles.button}>
+              {/* <View style={styles.button}>
                 <Button
                   title="Change Password"
                   onPress={handleChangePassword}
@@ -166,7 +166,16 @@ const UserProfileScreen = () => {
               </View>
               <View style={styles.button}>
                 <Button title="Logout" onPress={handleLogout} color="red" />
-              </View>
+              </View> */}
+<TouchableOpacity style={styles.changePasswordButton} onPress={handleChangePassword}>
+  <Text style={styles.changePasswordText}>Change Password</Text>
+</TouchableOpacity>
+
+<TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+  <Text style={styles.logoutText}>Logout</Text>
+</TouchableOpacity>
+
+
             </View>
           ) : (
             <Text style={styles.label}>Loading user data...</Text>
@@ -177,6 +186,63 @@ const UserProfileScreen = () => {
     </SafeAreaView>
   );
 };
+
+// const styles = StyleSheet.create({
+//   safeArea: {
+//     flex: 1,
+//     backgroundColor: "#F2F2F7",
+//   },
+//   wrapper: {
+//     flex: 1,
+//   },
+//   container: {
+//     padding: 20,
+//     flexGrow: 1,
+//     justifyContent: "flex-start",
+//   },
+//   label: {
+//     fontSize: 16,
+//     marginBottom: 20,
+//     color: "#3A3A3C",
+//   },
+//   card: {
+//     backgroundColor: "#FFFFFF",
+//     borderRadius: 16,
+//     padding: 24,
+//     shadowColor: "#000",
+//     shadowOffset: { width: 0, height: 4 },
+//     shadowOpacity: 0.1,
+//     shadowRadius: 8,
+//     elevation: 5,
+//     marginBottom: 20,
+//   },
+//   passwordContainer: {
+//     flexDirection: "row",
+//     alignItems: "center",
+//     borderWidth: 1,
+//     borderColor: "#D1D1D6",
+//     borderRadius: 12,
+//     marginBottom: 16,
+//     paddingHorizontal: 12,
+//     backgroundColor: "#FAFAFA",
+//   },
+//   input: {
+//     flex: 1,
+//     paddingVertical: 14,
+//     fontSize: 16,
+//     color: "#1C1C1E",
+//   },
+//   eyeIcon: {
+//     padding: 8,
+//   },
+//   button: {
+//     marginVertical: 10,
+//     borderRadius: 12,
+//     overflow: "hidden",
+//   },
+// });
+
+
 
 const styles = StyleSheet.create({
   safeArea: {
@@ -193,8 +259,9 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 16,
-    marginBottom: 20,
+    marginBottom: 8,
     color: "#3A3A3C",
+    fontWeight: "600",
   },
   card: {
     backgroundColor: "#FFFFFF",
@@ -206,6 +273,21 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 5,
     marginBottom: 20,
+  },
+  userInfoRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 16,
+  },
+  userInfoLabel: {
+    fontSize: 16,
+    color: "#3A3A3C",
+    fontWeight: "500",
+  },
+  userInfoValue: {
+    fontSize: 16,
+    color: "#1C1C1E",
+    fontWeight: "400",
   },
   passwordContainer: {
     flexDirection: "row",
@@ -226,11 +308,32 @@ const styles = StyleSheet.create({
   eyeIcon: {
     padding: 8,
   },
-  button: {
-    marginVertical: 10,
+  changePasswordButton: {
+    backgroundColor: "#007AFF", // iOS green accent
+    paddingVertical: 14,
     borderRadius: 12,
-    overflow: "hidden",
+    alignItems: "center",
+    marginVertical: 10,
+  },
+  changePasswordText: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  logoutButton: {
+    backgroundColor: "#FF3B30", // iOS destructive red
+    paddingVertical: 14,
+    borderRadius: 12,
+    alignItems: "center",
+    marginVertical: 10,
+  },
+  logoutText: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "600",
   },
 });
+
+
 
 export default UserProfileScreen;
