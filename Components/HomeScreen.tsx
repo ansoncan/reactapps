@@ -10,7 +10,7 @@ import {
 import { getFilms, searchFilm, Film } from "../service/film_api";
 import FilmList from "../Components/FilmList";
 import { HeaderBar } from "../Components/HeaderBar";
-import { ScrollIndex } from "../Components/ScrollIndex";
+// import { ScrollIndex } from "../Components/ScrollIndex";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FilterModal } from "../Components/FilterModal";
 
@@ -69,45 +69,6 @@ const HomeScreen = ({ navigation }: any) => {
     setIsSearchSubmitted(false); // Reset search submission
     fetchAllFilms();
   };
-
-  // const handleSearchSubmit = async () => {
-  //   if (!searchText.trim()) return;
-  //   try {
-  //     setLoading(true);
-  //     const result = await searchFilm(searchText.trim());
-  //     setFilms([result]);
-  //     setIsSearchActive(false);
-  //     setIsSearchSubmitted(true); // Mark as search submitted
-  //   } catch (error) {
-  //     console.error("Search failed:", error);
-  //     setFilms([]);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
-
-//   const handleSearchSubmit = async () => {
-//   if (!searchText.trim()) return;
-//   try {
-//     setLoading(true);
-//     const result = await searchFilm(searchText.trim());
-
-//     if (result === null) {
-//       setFilms([]); // ✅ Truly empty array
-//     } else {
-//       setFilms([result]);
-//     }
-
-//     setIsSearchActive(false);
-//     setIsSearchSubmitted(true);
-//   } catch (error) {
-//     console.error("Search failed:", error);
-//     setFilms([]);
-//   } finally {
-//     setLoading(false);
-//   }
-// };
 
 
 const handleSearchSubmit = async () => {
@@ -232,14 +193,14 @@ const handleSearchSubmit = async () => {
         </View>
         {/* Ensure ScrollIndex is above other views */}
         {/* <View style={styles.scrollIndexWrapper}> */}
-          <ScrollIndex
+          {/* <ScrollIndex
             scrollOffset={scrollOffset}
             showDropdown={showDropdown}
             toggleDropdown={toggleDropdown}
             scrollToTop={scrollToTop}
             
             hideDropdown={hideDropdown}
-          />
+          /> */}
         {/* </View> */}
         <FilterModal
           isVisible={isFilterModalVisible}

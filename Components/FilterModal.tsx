@@ -63,6 +63,18 @@ export const FilterModal = ({
     return months.length === 0 || months.includes(monthIndex);
   });
 
+  // const distinctYears = Array.from(
+  //   new Set(
+  //     filmsMatchingMonths
+  //       .map((f) => {
+  //         const match = f.released?.match(
+  //           /^(\d{1,2})\s([A-Za-z]{3})\s(\d{4})$/
+  //         );
+  //         return match ? parseInt(match[3], 10) : null;
+  //       })
+  //       .filter((y): y is number => y !== null)
+  //   )
+  // );
   const distinctYears = Array.from(
     new Set(
       filmsMatchingMonths
@@ -74,7 +86,7 @@ export const FilterModal = ({
         })
         .filter((y): y is number => y !== null)
     )
-  );
+  ).sort((a, b) => a - b);
 
   const monthNames = [
     "January",
