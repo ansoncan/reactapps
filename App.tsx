@@ -6,7 +6,7 @@ import HomeScreen from "./Components/HomeScreen";
 import LoginScreen from "./Components/LoginScreen";
 import UserProfileScreen from "./Components/UserProfileScreen";
 import FilmDetail from "./Components/FilmDetail";
-
+import { ScrollIndex } from "./Components/ScrollIndex";
 import { AuthProvider } from "./Components/AuthContext";
 
 const Stack = createStackNavigator();

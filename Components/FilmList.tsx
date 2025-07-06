@@ -14,6 +14,7 @@ import PosterImage from "./PosterImage";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { Film } from "../service/film_api";
 
+
 type Props = {
   films: Film[];
   onScroll: (event: NativeSyntheticEvent<NativeScrollEvent>) => void;

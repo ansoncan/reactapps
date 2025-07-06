@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
     top: 120, // Adjusting for iPhone demo
     zIndex: 1000,
     alignItems: "flex-end",
-    backgroundColor: "rgba(255, 0, 0, 0.3)",
+    
   },
   arrowButton: {
     backgroundColor: "#fff",
