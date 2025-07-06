@@ -1,12 +1,12 @@
-import React from 'react';
+import React from "react";
 import {
   View,
   Text,
   TouchableOpacity,
   TouchableWithoutFeedback,
   StyleSheet,
-} from 'react-native';
-import Icon from 'react-native-vector-icons/Octicons';
+} from "react-native";
+import Icon from "react-native-vector-icons/Octicons";
 
 interface ScrollIndexProps {
   scrollOffset: number;
@@ -35,7 +35,9 @@ export const ScrollIndex = ({
       >
         <View style={styles.arrowAndIndex}>
           <Icon name="arrow-up" size={18} color="#bcbcbc" />
-          <Text style={styles.arrowText}>{Math.floor(scrollOffset / 350) + 1}</Text>
+          <Text style={styles.arrowText}>
+            {Math.floor(scrollOffset / 350) + 1}
+          </Text>
         </View>
       </TouchableOpacity>
       {showDropdown && (
@@ -47,7 +49,11 @@ export const ScrollIndex = ({
                 hideDropdown(); // Ensure dropdown is hidden after scrolling to top
               }}
             >
-              <Text style={styles.dropdownText} numberOfLines={1} ellipsizeMode="tail">
+              <Text
+                style={styles.dropdownText}
+                numberOfLines={1}
+                ellipsizeMode="tail"
+              >
                 Go to Top Item
               </Text>
             </TouchableOpacity>
@@ -60,32 +66,33 @@ export const ScrollIndex = ({
 
 const styles = StyleSheet.create({
   container: {
-    position: 'absolute',
+    position: "absolute",
     right: 10,
     top: 120, // Adjusting for iPhone demo
     zIndex: 1000,
-    alignItems: 'flex-end',
+    alignItems: "flex-end",
+    backgroundColor: "rgba(255, 0, 0, 0.3)",
   },
   arrowButton: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderRadius: 8,
     padding: 6,
     shadowOffset: { width: 0, height: 2 }, // Shadow offset for iOS
     shadowOpacity: 0.3, // Shadow opacity for iOS
     shadowRadius: 3, // Shadow radius for iOS
-    justifyContent: 'center', // Center content vertically within the button
+    justifyContent: "center", // Center content vertically within the button
   },
   arrowAndIndex: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   arrowText: {
     fontSize: 16, // Adjusting for iPhone demo
-    color: '#999999',
+    color: "#999999",
     marginLeft: 5, // Add some space between the icon and text
   },
   dropdown: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderRadius: 8,
     padding: 10,
     shadowOffset: { width: 0, height: 2 }, // Shadow offset for iOS
@@ -96,6 +103,6 @@ const styles = StyleSheet.create({
   },
   dropdownText: {
     fontSize: 16, // Adjusting for iPhone demo
-    color: '#999999',
+    color: "#999999",
   },
 });
