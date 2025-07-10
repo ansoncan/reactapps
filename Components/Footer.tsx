@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
     backgroundColor: "",
 
   position: "absolute",
-  bottom: -30,
+  bottom: -5,
   left: 0,
   right: 0,
 
